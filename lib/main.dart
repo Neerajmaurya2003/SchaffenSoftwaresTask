@@ -30,7 +30,9 @@ class MyTask extends StatefulWidget {
 }
 
 class _MyTaskState extends State<MyTask> {
-  double scrollPosition = 0.0;
+  double scrolldownPosition = 0.0;
+  double currentposition=0.0;
+  double scrollupPosition = 0.0;
   bool mutenotificationswitch = false;
   bool searchtrack = false;
   List<bool> isfollow = [];
@@ -38,15 +40,23 @@ class _MyTaskState extends State<MyTask> {
   bool tag=false;
   int leftlist=0;
   int maxelement = 4;
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: NotificationListener<ScrollNotification>(
       onNotification: (notification) {
-        if (notification is ScrollUpdateNotification && notification.metrics.axisDirection==AxisDirection.down) {
-          scrollPosition = notification.metrics.pixels;
-          print(scrollPosition);
-          setState(() {});
+        if (notification is ScrollUpdateNotification ) {
+          if(notification.metrics.axisDirection==AxisDirection.down){
+              scrolldownPosition = notification.metrics.pixels;
+            setState(() {});
+          }
+         else if(notification.metrics.axisDirection==AxisDirection.up){
+              scrollupPosition = notification.metrics.pixels;
+            setState(() {});
+          }
+         
         }
         return false;
       },
@@ -64,7 +74,7 @@ class _MyTaskState extends State<MyTask> {
                   )),
             ),
             bottom: PreferredSize(
-              child: scrollPosition < 200
+              child: scrolldownPosition-scrollupPosition < 200
                   ? Container(
                       height: 100,
                       color: Colors.red,
@@ -246,7 +256,7 @@ class _MyTaskState extends State<MyTask> {
                     child: ReadMoreText(
                       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                       trimLines: 5,
-                      trimCollapsedText: "Show More",
+                      trimCollapsedText: "Read More",
                       colorClickableText: Colors.red,
                       trimExpandedText: "Show less",
                       trimMode: TrimMode.Line,
@@ -299,7 +309,9 @@ class _MyTaskState extends State<MyTask> {
                               ),
                             );
                           }
-
+                          else {
+                            return SizedBox.shrink();
+                          }
                         })),
                 Container(
                     height: 40,
@@ -451,7 +463,7 @@ class _MyTaskState extends State<MyTask> {
                               child: InkWell(
                                   onTap: () {
                                     setState(() {
-                                      scrollController.animateTo(815,
+                                      scrollController.animateTo(760,
                                           duration: const Duration(seconds: 1),
                                           curve: Curves.easeIn);
                                       searchtrack = true;
@@ -535,7 +547,7 @@ class _MyTaskState extends State<MyTask> {
                       height: 35,
                       width: 120,
                       decoration: BoxDecoration(
-                          color: Colors.red,
+                          color:isfollow[index] != true?  Colors.red: Colors.grey,
                           borderRadius: BorderRadius.circular(17)),
                       child: Center(
                           child: Text(
